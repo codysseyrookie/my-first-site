@@ -427,17 +427,13 @@
         outline: 2px solid #a5b4fc;
         outline-offset: 3px;
       }
-      body::before {
-        content: "";
+      .cat-cutout {
         position: fixed;
         left: 0;
         bottom: 0;
         z-index: -1;
         width: min(40vw, 420px);
-        aspect-ratio: 1080 / 1920;
-        background: url("background.jpg") center / 100% 100% no-repeat;
-        -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, #000 70%, transparent 100%);
-        mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, #000 70%, transparent 100%);
+        height: auto;
         pointer-events: none;
       }
       .orbit-system {
@@ -495,6 +491,7 @@
     </style>
   </head>
   <body>
+    <img class="cat-cutout" src="cat.png" alt="" aria-hidden="true" />
     <div class="orbit-system">
       <div class="ring" aria-hidden="true"></div>
       <div class="ring two" aria-hidden="true"></div>
