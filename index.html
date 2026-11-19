@@ -17,6 +17,7 @@
         justify-content: center;
         min-height: 100vh;
         margin: 0;
+        overflow-x: hidden;
         text-align: center;
       }
       img {
@@ -418,10 +419,66 @@
         outline: 2px solid #a5b4fc;
         outline-offset: 3px;
       }
+      .orbit-system {
+        position: relative;
+        width: 300px;
+        margin: 0 auto;
+      }
+      .orbit-system img {
+        display: block;
+        margin: 0;
+      }
+      .ring {
+        position: absolute;
+        inset: -14px;
+        border: 1px solid #7f8fb36b;
+        border-radius: 50%;
+        animation: orbit-spin 12s linear infinite;
+      }
+      .ring::before {
+        content: "";
+        position: absolute;
+        top: -4.5px;
+        left: 50%;
+        width: 9px;
+        height: 9px;
+        margin-left: -4.5px;
+        border-radius: 50%;
+        background: #4f6fd6;
+        box-shadow: 0 0 12px #4f6fd6aa;
+      }
+      .ring.two {
+        inset: -30px;
+        animation-duration: 20s;
+        animation-direction: reverse;
+        border-style: dashed;
+      }
+      .ring.two::before {
+        width: 6px;
+        height: 6px;
+        margin-left: -3px;
+        top: -3px;
+        background: #2aa58a;
+        box-shadow: none;
+      }
+      @keyframes orbit-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .ring {
+          animation: none;
+        }
+      }
     </style>
   </head>
   <body>
-    <img src="profile.webp" alt="프로필 사진" width="300" />
+    <div class="orbit-system">
+      <div class="ring" aria-hidden="true"></div>
+      <div class="ring two" aria-hidden="true"></div>
+      <img src="profile.webp" alt="프로필 사진" width="300" />
+    </div>
     <div class="blog-links">
       <a class="blog-btn" href="https://blog.naver.com/theaimarketer" target="_blank" rel="noopener noreferrer">네이버 블로그</a>
       <a class="blog-btn" href="https://ax-consultant.tistory.com" target="_blank" rel="noopener noreferrer">티스토리</a>
