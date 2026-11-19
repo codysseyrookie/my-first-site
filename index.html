@@ -413,6 +413,13 @@
         font-weight: 600;
         text-decoration: none;
       }
+      #musicBtn {
+        margin-top: 24px;
+        border-color: #ff00ff;
+        background: #ff00ff;
+        font-family: inherit;
+        cursor: pointer;
+      }
       .blog-btn:hover {
         background: #1a1a1a;
       }
@@ -484,6 +491,7 @@
       <a class="blog-btn" href="https://blog.naver.com/theaimarketer" target="_blank" rel="noopener noreferrer">네이버 블로그</a>
       <a class="blog-btn" href="https://ax-consultant.tistory.com" target="_blank" rel="noopener noreferrer">티스토리</a>
     </div>
+    <button type="button" class="blog-btn" id="musicBtn" aria-pressed="false">음악 재생</button>
     <h1>안녕하세요!</h1>
     <p>정말 멋있는 나의 첫 번째 웹사이트입니다.</p>
     <a class="magnetic-glow" href="mailto:ax.consultant.kr@gmail.com">
@@ -588,6 +596,30 @@
           void shine.offsetWidth;
           shine.classList.add("is-on");
         });
+      });
+    </script>
+    <script>
+      const musicBtn = document.getElementById("musicBtn");
+      const music = new Audio("orange-ade-1.mp3");
+      music.volume = 0.1;
+
+      // 자동 재생은 브라우저가 막으므로, 방문자가 버튼을 눌렀을 때만 재생합니다.
+      musicBtn.addEventListener("click", () => {
+        if (music.paused) {
+          music.play();
+        } else {
+          music.pause();
+        }
+      });
+
+      music.addEventListener("play", () => {
+        musicBtn.textContent = "음악 일시정지";
+        musicBtn.setAttribute("aria-pressed", "true");
+      });
+
+      music.addEventListener("pause", () => {
+        musicBtn.textContent = "음악 재생";
+        musicBtn.setAttribute("aria-pressed", "false");
       });
     </script>
   </body>
