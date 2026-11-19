@@ -19,7 +19,7 @@
         margin: 0;
         overflow-x: hidden;
         text-align: center;
-        background: url("background.jpg") left bottom / min(40vw, 420px) auto no-repeat fixed #ffbb2c;
+        background: #ffbb2c;
       }
       img {
         width: 300px;
@@ -426,6 +426,19 @@
       .blog-btn:focus-visible {
         outline: 2px solid #a5b4fc;
         outline-offset: 3px;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        z-index: -1;
+        width: min(40vw, 420px);
+        aspect-ratio: 1080 / 1920;
+        background: url("background.jpg") center / 100% 100% no-repeat;
+        -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, #000 60%, transparent 100%);
+        mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, #000 60%, transparent 100%);
+        pointer-events: none;
       }
       .orbit-system {
         position: relative;
