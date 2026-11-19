@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My First Site</title>
+    <style>
+      @font-face {
+        font-family: "부산단디고딕";
+        src: local("부산단디고딕"), url("fonts/BusanDandiGothic.woff2") format("woff2");
+      }
+      body {
+        font-family: "부산단디고딕", sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        text-align: center;
+      }
+      img {
+        width: 300px;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+      @property --glow-angle {
+        syntax: "<angle>";
+        initial-value: 0deg;
+        inherits: false;
+      }
+      .magnetic-glow {
+        position: relative;
+        isolation: isolate;
+        display: inline-flex;
+        margin-top: 12px;
+        padding: 1px;
+        border: 0;
+        border-radius: 999px;
+        background: none;
+        color: #fff;
+        font: inherit;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.3s ease-out;
+      }
+      .mg-ring,
+      .mg-halo {
+        position: absolute;
+        border-radius: 999px;
+        background: conic-gradient(from var(--glow-angle), #6d7cff, #ff6bd5, #33d6c7, #6d7cff);
+        animation: mg-spin 3s linear infinite;
+        pointer-events: none;
+      }
+      .mg-ring {
+        inset: 0;
+        z-index: -1;
+      }
+      .mg-halo {
+        inset: -6px;
+        z-index: -2;
+        filter: blur(12px);
+        opacity: 0.4;
+        transition: opacity 0.3s;
+      }
+      .magnetic-glow:hover .mg-halo {
+        opacity: 0.9;
+      }
+      .mg-face {
+        position: relative;
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        padding: 14px 28px;
+        border-radius: 999px;
+        background: #0a0a0a;
+        font-size: 14px;
+      }
+      .mg-face::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(90px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.2), transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s;
+        pointer-events: none;
+      }
+      .magnetic-glow:hover .mg-face::before {
+        opacity: 1;
+      }
+      .mg-ripple {
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%) scale(0);
+        pointer-events: none;
+        animation: mg-ripple 0.7s ease-out forwards;
+      }
+      .magnetic-glow:focus-visible {
+        outline: 2px solid #a5b4fc;
+        outline-offset: 4px;
+      }
+      @keyframes mg-spin {
+        to {
+          --glow-angle: 360deg;
+        }
+      }
+      @keyframes mg-ripple {
+        from {
+          transform: translate(-50%, -50%) scale(0);
+          opacity: 1;
+        }
+        to {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mg-ring,
+        .mg-halo {
+          animation: none;
+        }
+        .mg-ripple {
+          display: none;
+        }
+        .magnetic-glow {
+          transition: none;
+        }
+      }
+      @property --tx {
+        syntax: "<number>";
+        initial-value: 0;
+        inherits: true;
+      }
+      @property --ty {
+        syntax: "<number>";
+        initial-value: 0;
+        inherits: true;
+      }
+      @keyframes holo-idle {
+        0%,
+        100% {
+          --tx: -0.5;
+          --ty: 0.2;
+        }
+        50% {
+          --tx: 0.5;
+          --ty: -0.2;
+        }
+      }
+      .holo-stage {
+        --c1: #ffd66e;
+        --c2: #ff6bd5;
+        --c3: #33d6c7;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+        margin-top: 32px;
+      }
+      .holo-stage[data-tier="rare"] {
+        --c1: #7fd0ff;
+        --c2: #6d7cff;
+        --c3: #33d6c7;
+      }
+      .holo-stage[data-tier="epic"] {
+        --c1: #e2a6ff;
+        --c2: #ff6bd5;
+        --c3: #6d7cff;
+      }
+      .holo-scene {
+        --tx: 0;
+        --ty: 0;
+        --hyp: 0.2;
+        width: min(260px, 78vw);
+        aspect-ratio: 0.716;
+        perspective: 900px;
+        touch-action: none;
+      }
+      .holo-scene.holo-idle {
+        animation: holo-idle 6s ease-in-out infinite;
+      }
+      .holo-scene.is-flipped {
+        --flip: 180deg;
+      }
+      .holo-card {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        transform-style: preserve-3d;
+        transform: rotateX(calc(var(--ty) * -14deg)) rotateY(calc(var(--tx) * 18deg + var(--flip, 0deg)));
+        transition: transform 0.5s ease-out;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .holo-card:focus-visible {
+        outline: 2px solid #a5b4fc;
+        outline-offset: 4px;
+        border-radius: 16px;
+      }
+      .holo-face {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 14px;
+        border-radius: 16px;
+        overflow: hidden;
+        text-align: left;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        background: linear-gradient(160deg, #1d2350, #0c0f25 52%, #16133a);
+        box-shadow: inset 0 0 0 1px #ffffff2b, 0 14px 30px #0009, 0 0 24px color-mix(in srgb, var(--c2) 40%, transparent);
+      }
+      .holo-back {
+        transform: rotateY(180deg);
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        background: radial-gradient(circle at 50% 45%, #3b2a7a, #0c0f25 65%);
+      }
+      .holo-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+      }
+      .holo-head b {
+        background: linear-gradient(90deg, #fff, var(--c1));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .holo-tier {
+        font-style: normal;
+        font-size: 10px;
+        padding: 3px 9px;
+        border-radius: 99px;
+        border: 1px solid var(--c1);
+        color: var(--c1);
+      }
+      .holo-art {
+        position: relative;
+        flex: 1;
+        min-height: 0;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #0b0d22;
+      }
+      .holo-art img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        user-select: none;
+      }
+      .holo-name small {
+        display: block;
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        color: #a8b0e0;
+      }
+      .holo-name strong {
+        display: block;
+        margin-top: 2px;
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .holo-emblem {
+        display: grid;
+        place-items: center;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        border: 1px solid #ffffff3d;
+        background: conic-gradient(var(--c1), var(--c2), var(--c3), var(--c1));
+        box-shadow: 0 0 2em color-mix(in srgb, var(--c2) 40%, transparent);
+      }
+      .holo-emblem b {
+        font-size: 20px;
+        font-weight: 900;
+        line-height: 1;
+        text-align: center;
+        letter-spacing: 0.06em;
+      }
+      .holo-back-copy {
+        display: grid;
+        gap: 6px;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 600;
+        color: #d9ddff;
+      }
+      .holo-back-copy small {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.3em;
+        color: #8b93c6;
+      }
+      .holo-foil,
+      .holo-glare {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+      }
+      .holo-foil {
+        background: repeating-linear-gradient(115deg, var(--c1) 0%, var(--c2) 4%, var(--c3) 8%, var(--c1) 12%);
+        background-size: 300% 300%;
+        background-position: calc(50% + var(--tx) * 40%) calc(50% + var(--ty) * 40%);
+        mix-blend-mode: color-dodge;
+        opacity: calc(0.15 + var(--hyp) * 0.4);
+        filter: brightness(0.6) saturate(1.4);
+      }
+      .holo-glare {
+        background: radial-gradient(circle at calc(50% + var(--tx) * 48%) calc(50% + var(--ty) * 48%), #ffffffd9 0%, #ffffff47 16%, transparent 52%);
+        mix-blend-mode: overlay;
+        opacity: calc(0.3 + var(--hyp) * 0.7);
+      }
+      .holo-shine {
+        position: absolute;
+        inset: -60%;
+        z-index: 3;
+        background: linear-gradient(105deg, transparent 42%, #ffffff8c 50%, transparent 58%);
+        translate: -70% 0;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .holo-shine.is-on {
+        animation: holo-sweep 0.9s ease-out;
+      }
+      @keyframes holo-sweep {
+        0% {
+          translate: -70% 0;
+          opacity: 1;
+        }
+        100% {
+          translate: 70% 0;
+          opacity: 0;
+        }
+      }
+      .holo-tiers {
+        display: flex;
+        gap: 4px;
+        padding: 4px;
+        border: 1px solid #ffffff1c;
+        border-radius: 99px;
+        background: #0d1024;
+      }
+      .holo-tiers button {
+        min-height: 32px;
+        padding: 0 14px;
+        border: 0;
+        border-radius: 99px;
+        background: transparent;
+        color: #8890bf;
+        font: inherit;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        cursor: pointer;
+      }
+      .holo-tiers button[aria-pressed="true"] {
+        background: linear-gradient(120deg, var(--c1), var(--c2));
+        color: #fff;
+      }
+      .holo-tiers button:focus-visible {
+        outline: 2px solid #a5b4fc;
+        outline-offset: 2px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .holo-scene.holo-idle,
+        .holo-shine.is-on {
+          animation: none;
+        }
+        .holo-card {
+          transition: none;
+        }
+      }
+      .blog-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .blog-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        border: 1px solid #ffffff3d;
+        border-radius: 999px;
+        background: #0a0a0a;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .blog-btn:hover {
+        background: #1a1a1a;
+      }
+      .blog-btn:focus-visible {
+        outline: 2px solid #a5b4fc;
+        outline-offset: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <img src="profile.webp" alt="프로필 사진" width="300" />
+    <div class="blog-links">
+      <a class="blog-btn" href="https://blog.naver.com/theaimarketer" target="_blank" rel="noopener noreferrer">네이버 블로그</a>
+      <a class="blog-btn" href="https://ax-consultant.tistory.com" target="_blank" rel="noopener noreferrer">티스토리</a>
+    </div>
+    <h1>안녕하세요!</h1>
+    <p>첫 번째 웹사이트입니다.</p>
+    <a class="magnetic-glow" href="mailto:ax.consultant.kr@gmail.com">
+      <span aria-hidden="true" class="mg-halo"></span>
+      <span aria-hidden="true" class="mg-ring"></span>
+      <span class="mg-face">이메일 발송</span>
+    </a>
+    <div class="holo-stage" data-tier="legend">
+      <div class="holo-scene holo-idle" id="holoScene">
+        <button class="holo-card" type="button" id="holoCard" aria-pressed="false" aria-label="카드 뒤집기">
+          <span class="holo-face holo-front">
+            <span class="holo-head"><b>AX CONSULTANT</b><em class="holo-tier">LEGEND</em></span>
+            <span class="holo-art"><img src="profile.webp" alt="프로필 일러스트" draggable="false" /></span>
+            <span class="holo-name"><small>MEMBER CARD</small><strong>AX Consultant</strong></span>
+            <span class="holo-foil"></span>
+            <span class="holo-glare"></span>
+            <span class="holo-shine"></span>
+          </span>
+          <span class="holo-face holo-back">
+            <span class="holo-emblem"><b>AX<br />CONSULTANT</b></span>
+            <span class="holo-back-copy">MY FIRST SITE<small>HOLO CARD</small></span>
+            <span class="holo-foil"></span>
+            <span class="holo-glare"></span>
+          </span>
+        </button>
+      </div>
+      <div class="holo-tiers" role="group" aria-label="카드 등급">
+        <button type="button" data-tier="rare" aria-pressed="false">RARE</button>
+        <button type="button" data-tier="epic" aria-pressed="false">EPIC</button>
+        <button type="button" data-tier="legend" aria-pressed="true">LEGEND</button>
+      </div>
+    </div>
+    <script>
+      const btn = document.querySelector(".magnetic-glow");
+      const face = btn.querySelector(".mg-face");
+      const STRENGTH = 12;
+
+      btn.addEventListener("pointermove", (e) => {
+        const box = btn.getBoundingClientRect();
+        const x = (e.clientX - box.left) / box.width;
+        const y = (e.clientY - box.top) / box.height;
+        btn.style.transform = `translate(${(x - 0.5) * STRENGTH}px, ${(y - 0.5) * STRENGTH}px)`;
+        btn.style.setProperty("--mx", `${x * 100}%`);
+        btn.style.setProperty("--my", `${y * 100}%`);
+      });
+
+      btn.addEventListener("pointerleave", () => {
+        btn.style.transform = "";
+      });
+
+      btn.addEventListener("click", (e) => {
+        const box = btn.getBoundingClientRect();
+        const ripple = document.createElement("span");
+        ripple.className = "mg-ripple";
+        ripple.style.left = `${e.clientX - box.left}px`;
+        ripple.style.top = `${e.clientY - box.top}px`;
+        face.appendChild(ripple);
+        ripple.addEventListener("animationend", () => ripple.remove());
+      });
+    </script>
+    <script>
+      const holoStage = document.querySelector(".holo-stage");
+      const holoScene = document.getElementById("holoScene");
+      const holoCard = document.getElementById("holoCard");
+      const holoReduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      let holoFlipped = false;
+
+      holoScene.addEventListener("pointermove", (e) => {
+        if (holoReduce) return;
+        // 카드가 아니라 움직이지 않는 scene 기준으로 계산해야 떨림이 없습니다.
+        const box = holoScene.getBoundingClientRect();
+        const tx = Math.max(-1, Math.min(1, (e.clientX - box.left - box.width / 2) / (box.width / 2)));
+        const ty = Math.max(-1, Math.min(1, (e.clientY - box.top - box.height / 2) / (box.height / 2)));
+        holoScene.classList.remove("holo-idle");
+        holoScene.style.setProperty("--tx", tx.toFixed(3));
+        holoScene.style.setProperty("--ty", ty.toFixed(3));
+        holoScene.style.setProperty("--hyp", Math.min(1, Math.hypot(tx, ty)).toFixed(3));
+      });
+
+      holoScene.addEventListener("pointerleave", () => {
+        holoScene.style.removeProperty("--tx");
+        holoScene.style.removeProperty("--ty");
+        holoScene.style.removeProperty("--hyp");
+        holoScene.classList.add("holo-idle");
+      });
+
+      holoCard.addEventListener("click", () => {
+        holoFlipped = !holoFlipped;
+        holoScene.classList.toggle("is-flipped", holoFlipped);
+        holoCard.setAttribute("aria-pressed", String(holoFlipped));
+      });
+
+      holoStage.querySelectorAll(".holo-tiers button").forEach((button) => {
+        button.addEventListener("click", () => {
+          holoStage.dataset.tier = button.dataset.tier;
+          holoStage.querySelectorAll(".holo-tiers button").forEach((item) => {
+            item.setAttribute("aria-pressed", String(item === button));
+          });
+          // 등급을 바꿀 때 빛이 한 번 쓸고 지나가도록 애니메이션을 다시 시작합니다.
+          const shine = holoCard.querySelector(".holo-shine");
+          shine.classList.remove("is-on");
+          void shine.offsetWidth;
+          shine.classList.add("is-on");
+        });
+      });
+    </script>
+  </body>
+</html>
